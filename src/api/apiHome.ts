@@ -1,0 +1,1 @@
+export const urlConsultationRNC = "https://backendwebscrapingrncdgii-production.up.railway.app"
