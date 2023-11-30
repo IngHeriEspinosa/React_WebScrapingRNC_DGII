@@ -6,19 +6,22 @@ import { ChangeEvent, Dispatch, FC, useState } from "react"
 import { urlConsultationRNC } from "../api/apiHome";
 import { consultRNC } from "../api";
 import { ObjRNC } from "../interfaces/TResponseDGII";
+import { Loading } from "./Loading";
 
 
 
 interface Props {
-    rncValue: string
+    rncValue: string;
     setRncValue: Dispatch<React.SetStateAction<string>>;
     rncResponse: ObjRNC;
-    setRncResponse: React.Dispatch<React.SetStateAction<ObjRNC>>
+    setRncResponse: React.Dispatch<React.SetStateAction<ObjRNC>>;
 }
 
 export const Main: FC<Props> = ({ rncValue, setRncValue, rncResponse, setRncResponse }) => {
 
     const [showTable, setshowTable] = useState(false)
+    const [showLoading, setshowLoading] = useState<boolean>(true)
+
 
     const handlerChange = (event: ChangeEvent<HTMLInputElement>) => {
         event.preventDefault()
@@ -28,10 +31,11 @@ export const Main: FC<Props> = ({ rncValue, setRncValue, rncResponse, setRncResp
     }
 
     const handlerClick = async () => {
+        setshowLoading(false)
         const res: ObjRNC = await consultRNC(urlConsultationRNC, rncValue)
         res && setRncResponse(res)
-
         setshowTable(true)
+        res && setshowLoading(true)
     }
 
     return (
@@ -60,56 +64,60 @@ export const Main: FC<Props> = ({ rncValue, setRncValue, rncResponse, setRncResp
                     </Button>
                 </FormControl>
             </Box>
+
             <Box sx={{
                 width: "100%", display: "flex", justifyContent: "center"
             }}>
                 {
-                    showTable && (
-                        rncResponse?.RNC ? (
-                            <List sx={{ width: "500px", display: "flex", background: "#34495e", borderRadius: "1em", padding: "1.5em" }
-                            } >
-                                <ListItem sx={{ display: "flex", flexDirection: "column" }} >
+                    showLoading ?
+                        showTable && (
+                            rncResponse?.RNC ? (
+                                <List sx={{ width: "500px", display: "flex", background: "#34495e", borderRadius: "1em", padding: "1.5em" }
+                                } >
+                                    <ListItem sx={{ display: "flex", flexDirection: "column" }} >
 
-                                    <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                                        primary={"RNC : "}
-                                        secondary={rncResponse.RNC}
-                                    />
-                                    <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                                        primary={"Razon Social : "}
-                                        secondary={rncResponse.Razon_Social}
-                                    />
-                                    <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                                        primary={"Nombre Comercial : "}
-                                        secondary={rncResponse.Nombre_Comercial}
-                                    />
-                                    <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                                        primary={"Regimen de pagos : "}
-                                        secondary={rncResponse.Regimen_de_pagos}
-                                    />
-                                    <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                                        primary={"Estado : "}
-                                        secondary={rncResponse.Estado}
-                                    />
-                                    <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                                        primary={"Actividad Economica : "}
-                                        secondary={rncResponse.Actividad_Economica}
-                                    />
-                                    <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                                        primary={"Administracion Local : "}
-                                        secondary={rncResponse.Administracion_Local}
-                                    />
+                                        <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                                            primary={"RNC : "}
+                                            secondary={rncResponse.RNC}
+                                        />
+                                        <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                                            primary={"Razon Social : "}
+                                            secondary={rncResponse.Razon_Social}
+                                        />
+                                        <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                                            primary={"Nombre Comercial : "}
+                                            secondary={rncResponse.Nombre_Comercial}
+                                        />
+                                        <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                                            primary={"Regimen de pagos : "}
+                                            secondary={rncResponse.Regimen_de_pagos}
+                                        />
+                                        <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                                            primary={"Estado : "}
+                                            secondary={rncResponse.Estado}
+                                        />
+                                        <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                                            primary={"Actividad Economica : "}
+                                            secondary={rncResponse.Actividad_Economica}
+                                        />
+                                        <ListItemText sx={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                                            primary={"Administracion Local : "}
+                                            secondary={rncResponse.Administracion_Local}
+                                        />
 
-                                </ListItem>
-                            </List>
-                        )
-                            :
-                            <Box sx={{ marginTop: "4em" }}>
-                                <Typography variant="h5" component="h5" color="error">Este RNC no esta en la DGII</Typography>
-                            </Box>
-                    )
+                                    </ListItem>
+                                </List>
+                            )
+                                :
+                                <Box sx={{ marginTop: "4em" }}>
+                                    <Typography variant="h5" component="h5" color="error">Este RNC no esta en la DGII</Typography>
+                                </Box>
+                        ) : <Loading />
                 }
 
             </Box >
+
+
         </Box >
 
     )
